@@ -1,0 +1,64 @@
+{
+  "data_quality_audit": {
+    "total_records": 10847,
+    "audit_date": "2024-11-30",
+    "completeness_metrics": {
+      "complaint_date_missing": 0,
+      "complaint_category_missing": 12,
+      "resolution_date_missing": 234,
+      "satisfaction_rating_missing": 45,
+      "overall_completeness_pct": 98.7
+    },
+    "uniqueness_metrics": {
+      "total_records": 10847,
+      "unique_records": 10821,
+      "duplicate_records": 26,
+      "duplicate_rate_pct": 0.24
+    },
+    "validity_metrics": {
+      "invalid_dates": 8,
+      "invalid_ratings": 3,
+      "invalid_categories": 5,
+      "overall_validity_pct": 99.84
+    },
+    "consistency_metrics": {
+      "complaints_with_resolution_dates": 9876,
+      "complaints_without_resolution": 971,
+      "status_consistency_pct": 99.2,
+      "category_mapping_consistency_pct": 99.95
+    },
+    "timeliness_metrics": {
+      "records_updated_last_7_days": 2134,
+      "records_updated_last_30_days": 5612,
+      "data_freshness_pct": 94.5
+    },
+    "quality_score": 98.54,
+    "quality_grade": "A+",
+    "recommendations": [
+      "Address 26 duplicate records - investigate data source",
+      "Follow up on 234 records with missing resolution dates",
+      "Review 12 records with missing categories for proper classification"
+    ]
+  },
+  "field_statistics": {
+    "complaint_date": {
+      "min": "2023-01-15",
+      "max": "2024-11-30",
+      "range_months": 23
+    },
+    "satisfaction_rating": {
+      "mean": 3.2,
+      "median": 3,
+      "std_dev": 1.45,
+      "min": 1,
+      "max": 5
+    },
+    "resolution_time_days": {
+      "mean": 7.3,
+      "median": 5,
+      "std_dev": 12.1,
+      "min": 0,
+      "max": 127
+    }
+  }
+}
