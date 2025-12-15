@@ -1,0 +1,130 @@
+import pandas as pd
+import numpy as np
+
+df = pd.read_excel("../data/complaints_amex.xlsx")
+df.head()
+
+
+df.shape
+df.columns
+df.info()
+df.isna().sum()
+
+
+df = df.rename(columns={
+    'issue_category': 'category',
+    'resolution_status': 'status'
+})
+
+
+df.columns
+df = df.drop_duplicates()
+
+df['complaint_date'] = pd.to_datetime(df['complaint_date'], errors='coerce')
+df['days_to_resolve'] = pd.to_numeric(df['days_to_resolve'], errors='coerce')
+
+total_complaints = len(df)
+avg_resolution = df['days_to_resolve'].mean()
+median_resolution = df['days_to_resolve'].median()
+closure_rate = (df['status'].str.lower() == 'closed').mean() * 100
+
+total_complaints, avg_resolution, median_resolution, closure_rate
+
+def resolution_bucket(days):
+    if pd.isna(days):
+        return 'Unknown'
+    elif days <= 5:
+        return 'Fast'
+    elif days <= 15:
+        return 'Medium'
+    elif days <= 30:
+        return 'Slow'
+    else:
+        return 'Very Slow'
+
+df['resolution_bucket'] = df['days_to_resolve'].apply(resolution_bucket)
+
+
+import plotly.express as px
+
+df['month'] = df['complaint_date'].dt.to_period('M').astype(str)
+
+monthly_trend = (
+    df.groupby('month')
+    .size()
+    .reset_index(name='complaints')
+)
+
+fig1 = px.line(
+    monthly_trend,
+    x='month',
+    y='complaints',
+    title='Monthly Complaint Trend'
+)
+
+fig1.show()
+
+status_dist = (
+    df['status']
+    .value_counts()
+    .reset_index()
+)
+
+status_dist.columns = ['status', 'count']
+
+fig2 = px.pie(
+    status_dist,
+    names='status',
+    values='count',
+    title='Complaint Status Distribution'
+)
+
+fig2.show()
+bucket_dist = (
+    df['resolution_bucket']
+    .value_counts()
+    .reset_index()
+)
+
+bucket_dist.columns = ['resolution_bucket', 'count']
+
+fig3 = px.bar(
+    bucket_dist,
+    x='resolution_bucket',
+    y='count',
+    title='Resolution Time Distribution'
+)
+
+fig3.show()
+category_perf = (
+    df.groupby('category')['days_to_resolve']
+    .mean()
+    .reset_index()
+    .sort_values('days_to_resolve', ascending=False)
+)
+
+fig4 = px.bar(
+    category_perf,
+    x='days_to_resolve',
+    y='category',
+    orientation='h',
+    title='Average Resolution Time by Issue Category'
+)
+
+fig4.show()
+category_bucket_dist = (
+    df.groupby(['category', 'resolution_bucket'])
+    .size()
+    .reset_index(name='count')
+)
+
+fig5 = px.bar(
+    category_bucket_dist,
+    x='resolution_bucket',
+    y='count',
+    color='category',
+    barmode='group',
+    title='Resolution Speed Distribution by Issue Category'
+)
+
+fig5.show()
